@@ -13,7 +13,8 @@ public:
 		t.push_back(0);
 	}
 
-	int size() {
+	int size() 
+	{
 		return t.size() - 1;
 	}
 
@@ -21,19 +22,41 @@ public:
 	{
 	}
 
-	int peek() {
-		return -1;
+	int peek() 
+	{
+		return t[1];
 	}
 
-	int pop() {
-		return -1;
+	int pop() 
+	{
+		int result = peek();
+		csere(1, size());
+		t.erase(t.end()-1);
+		sullyeszt(1);
+		return result;
 	}
 
-	void push(int e) {
-		
+	void push(int e) 
+	{
+		t.push_back(e);
+		fellebegtet(size());
 	}
+
+	void diagnosztika()
+	{
+		for (int i = t.size()-1; 0<=i; i--)
+		{
+			int j = i;
+			while (j != 0)
+			{
+				cout << "t[" << j << "] : " << t[j] << endl;
+				j = szulo(j);
+			}
+			cout << "lanc vege\n";
+		}
+	}
+
 private:
-
 	int szulo(int n) {
 		return n/2;
 	}
@@ -66,7 +89,11 @@ private:
 	}
 
 	void fellebegtet(int n) {
-
+		while (t[n] < t[szulo(n)])
+		{
+			csere(n, szulo(n));
+			n = szulo(n);
+		}
 	}
 
 	void csere(int i, int j) {
@@ -79,5 +106,28 @@ private:
 
 int main()
 {
+	cout << "--------------- kupac letrehozasa --------------\n";
+	kupac k;
+	k.diagnosztika();
+	cout << "--------------- kupac 5-ot belerakjuk --------------\n";
+	k.push(5);
+	k.diagnosztika();
+	cout << "--------------- kupac 3-ot belerakjuk --------------\n";
+	k.push(3);
+	k.diagnosztika();
+	cout << "--------------- kupac 7-et belerakjuk --------------\n";
+	k.push(7);
+	k.diagnosztika();
+
+	cout << "--------------- kupac 1-et belerakjuk --------------\n";
+	k.push(1);
+	k.diagnosztika();
+	cout << "--------------- kupac: 3, 5, 2, 4, 1 szamokat belerakjuk --------------\n";
+	k.push(3);
+	k.push(5);
+	k.push(2);
+	k.push(4);
+	k.push(1);
+	k.diagnosztika();
 
 }
