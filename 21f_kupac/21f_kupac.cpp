@@ -1,7 +1,14 @@
 #include <iostream>
 #include <vector>
+#include<cstdlib>
 
 using namespace std;
+
+int randint_kozott(int tol, int ig)
+{
+	return tol + (rand() % (ig - tol));
+}
+
 
 class kupac
 {
@@ -56,12 +63,20 @@ public:
 		}
 	}
 
+	// megkeresi a kupacban az elem ÉRTÉKET, és megjavítja, ha az nincs a helyén.
+	void repair(int elem) {
+		int i = keres(1, elem);
+		megigazit(i);
+	}
+
 private:
-	int szulo(int n) {
+	int szulo(int n) 
+	{
 		return n/2;
 	}
 
-	int kisebbik_gyerek(int n) {
+	int kisebbik_gyerek(int n) 
+	{
 		int egyik = n*2;
 		int masik = egyik + 1;
 		if (size() < egyik)
@@ -74,7 +89,8 @@ private:
 	// LBYL : Look before you leap stratégia -- személyes preferenciám
 	// EAFP : Easier to ask forgiveness than permission  -- de ez elterjedtebb: try-catch....
 
-	int nagyobbik_gyerek(int n) {
+	int nagyobbik_gyerek(int n) 
+	{
 		int egyik = n * 2;
 		int masik = egyik + 1;
 		if (size() < egyik)
@@ -84,11 +100,21 @@ private:
 		return t[egyik] > t[masik] ? egyik : masik;
 	}
 
-	void sullyeszt(int n) {
-
+	void sullyeszt(int n) 
+	{
+		int kgy = kisebbik_gyerek(n);
+		if (kgy == -1)
+			return;
+		if (t[kgy] < t[n])
+		{
+			csere(kgy, n);
+			sullyeszt(kgy);
+		}
 	}
 
-	void fellebegtet(int n) {
+	
+	void fellebegtet(int n) 
+	{
 		while (t[n] < t[szulo(n)])
 		{
 			csere(n, szulo(n));
@@ -96,7 +122,33 @@ private:
 		}
 	}
 
-	void csere(int i, int j) {
+	int keres(int hol, int elem)
+	{
+		if (t[hol] == elem)
+			return hol;
+		int egyik = 2 * hol;
+		if (size() < egyik)
+			return -1;
+		int az_eredmeny = keres(egyik, elem);
+		if (az_eredmeny != -1)
+			return az_eredmeny;
+		int masik = 2 * hol + 1;
+		if (size() < masik)
+			return -1;
+		az_eredmeny = keres(masik, elem);
+		if (az_eredmeny != -1)
+			return az_eredmeny;
+		return -1;
+	}
+
+	void megigazit(int n) 
+	{
+		sullyeszt(n);
+		fellebegtet(n);
+	}
+
+	void csere(int i, int j) 
+	{
 		int temp = t[i];
 		t[i] = t[j];
 		t[j] = temp;
@@ -129,5 +181,39 @@ int main()
 	k.push(4);
 	k.push(1);
 	k.diagnosztika();
+	cout << "--------------- kupac: poppolunk --------------\n";
+	cout << k.pop();
+	k.diagnosztika();
+
+	cout << "--------------- kupac: poppolunk --------------\n";
+	cout << k.pop();
+	k.diagnosztika();
+
+	cout << "--------------- kupac: poppolunk --------------\n";
+	cout << k.pop();
+	k.diagnosztika();
+
+	cout << "--------------- kupac: poppolunk --------------\n";
+	cout << k.pop();
+	k.diagnosztika();
+	cout << "--------------- kupac: poppolunk, mintha nem lenne holnap --------------\n";
+	cout << k.pop();
+	cout << k.pop();
+	cout << k.pop();
+	cout << k.pop();
+	cout << k.pop();
+	k.diagnosztika();
+
+
+	srand((unsigned)time(NULL)); // itt (a program elején) inicializálod a randomszámgenerátort, 
+	for (int i = 0; i < 100; i++)
+	{
+		cout << randint_kozott(5, 10)<<endl; // itt pedig használod. 5 inklúzív, 10 exklúzív határ, azaz 10 már nem lehet eredmény, 5 még igen.
+	}
 
 }
+
+
+
+
+
