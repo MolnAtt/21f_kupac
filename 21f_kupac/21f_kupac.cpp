@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include<cstdlib>
+#include <cstdlib>
 
 using namespace std;
 
@@ -14,9 +14,13 @@ class kupac
 {
 public:
 	vector<int> t;
+	mutable bool(*comparator)(int a, int b);
 
-	kupac()
+	// C#-ban ez lenne: Func<int, int, bool> comparator;
+
+	kupac(bool(*comparator)(int a, int b))
 	{
+		this->comparator = comparator;
 		t.push_back(0);
 	}
 
@@ -51,16 +55,6 @@ public:
 
 	void diagnosztika()
 	{
-		for (int i = t.size()-1; 0<=i; i--)
-		{
-			int j = i;
-			while (j != 0)
-			{
-				cout << "t[" << j << "] : " << t[j] << endl;
-				j = szulo(j);
-			}
-			cout << "lanc vege\n";
-		}
 	}
 
 	// megkeresi a kupacban az elem ÉRTÉKET, és megjavítja, ha az nincs a helyén.
@@ -72,6 +66,8 @@ public:
 private:
 	int szulo(int n) 
 	{
+		if (n == 1) 
+			return n;
 		return n/2;
 	}
 
@@ -83,7 +79,7 @@ private:
 			return -1;
 		if (size() < masik)
 			return egyik;
-		return t[egyik]<t[masik] ? egyik : masik;
+		return this->comparator(t[egyik],t[masik]) ? egyik : masik;
 	}
 
 	// LBYL : Look before you leap stratégia -- személyes preferenciám
@@ -97,7 +93,7 @@ private:
 			return -1;
 		if (size() < masik)
 			return egyik;
-		return t[egyik] > t[masik] ? egyik : masik;
+		return this->comparator(t[masik], t[egyik])? egyik : masik;
 	}
 
 	void sullyeszt(int n) 
@@ -105,7 +101,7 @@ private:
 		int kgy = kisebbik_gyerek(n);
 		if (kgy == -1)
 			return;
-		if (t[kgy] < t[n])
+		if (this->comparator(t[kgy],t[n]))
 		{
 			csere(kgy, n);
 			sullyeszt(kgy);
@@ -115,7 +111,7 @@ private:
 	
 	void fellebegtet(int n) 
 	{
-		while (t[n] < t[szulo(n)])
+		while (this->comparator(t[n],t[szulo(n)])) // t[n] < t[szulo(n)]
 		{
 			csere(n, szulo(n));
 			n = szulo(n);
@@ -159,11 +155,12 @@ private:
 int main()
 {
 	cout << "--------------- kupac letrehozasa --------------\n";
-	kupac k;
+	kupac k([](int a, int b) {return a > b; });
 	k.diagnosztika();
 	cout << "--------------- kupac 5-ot belerakjuk --------------\n";
 	k.push(5);
 	k.diagnosztika();
+/**/
 	cout << "--------------- kupac 3-ot belerakjuk --------------\n";
 	k.push(3);
 	k.diagnosztika();
@@ -204,12 +201,7 @@ int main()
 	cout << k.pop();
 	k.diagnosztika();
 
-
-	srand((unsigned)time(NULL)); // itt (a program elején) inicializálod a randomszámgenerátort, 
-	for (int i = 0; i < 100; i++)
-	{
-		cout << randint_kozott(5, 10)<<endl; // itt pedig használod. 5 inklúzív, 10 exklúzív határ, azaz 10 már nem lehet eredmény, 5 még igen.
-	}
+/**/
 
 }
 
