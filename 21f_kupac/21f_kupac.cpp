@@ -55,7 +55,37 @@ public:
 
 	void diagnosztika()
 	{
+		cout << "digraph {" << endl;
+		terkep(1);
+		cout << "}" << endl;
 	}
+
+	void terkep(int n) {
+		if (size() < n)
+			return;
+		int c = t[n];
+		if (kisebbik_gyerek(n) == -1)
+			return;
+		cout << c << " -> " << t[kisebbik_gyerek(n)] << endl;
+		if (nagyobbik_gyerek(n) == -1)
+			return;
+		cout << c << " -> " << t[nagyobbik_gyerek(n)] << endl;
+
+		terkep(kisebbik_gyerek(n));
+		terkep(nagyobbik_gyerek(n));
+	}
+
+	void szulo_gyerek_graphviz(int sz)
+	{
+		int nagyobbikgyerek = 2 * sz + 1;
+		if (nagyobbikgyerek <= size())
+			cout << "\t" << t[sz] << " -> " << t[nagyobbikgyerek] << endl;
+		int kisebbikgyerek = 2 * sz;
+		if (kisebbikgyerek <= size())
+			cout << "\t"  << t[sz] << " -> " << t[kisebbikgyerek] << endl;
+	}
+
+
 
 	// megkeresi a kupacban az elem ÉRTÉKET, és megjavítja, ha az nincs a helyén.
 	void repair(int elem) {
@@ -179,26 +209,26 @@ int main()
 	k.push(1);
 	k.diagnosztika();
 	cout << "--------------- kupac: poppolunk --------------\n";
-	cout << k.pop();
+	cout << k.pop() << endl;
 	k.diagnosztika();
 
 	cout << "--------------- kupac: poppolunk --------------\n";
-	cout << k.pop();
+	cout << k.pop() << endl;
 	k.diagnosztika();
 
 	cout << "--------------- kupac: poppolunk --------------\n";
-	cout << k.pop();
+	cout << k.pop() << endl;
 	k.diagnosztika();
 
 	cout << "--------------- kupac: poppolunk --------------\n";
-	cout << k.pop();
+	cout << k.pop() << endl;
 	k.diagnosztika();
 	cout << "--------------- kupac: poppolunk, mintha nem lenne holnap --------------\n";
-	cout << k.pop();
-	cout << k.pop();
-	cout << k.pop();
-	cout << k.pop();
-	cout << k.pop();
+	cout << k.pop() << endl;
+	cout << k.pop() << endl;
+	cout << k.pop() << endl;
+	cout << k.pop() << endl;
+	cout << k.pop() << endl;
 	k.diagnosztika();
 
 /**/
